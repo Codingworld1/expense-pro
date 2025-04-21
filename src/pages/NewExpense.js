@@ -26,6 +26,8 @@ const NewExpense = () => {
     <div className="main-container">
       <div className="title-wrapper">
         <h1 className="page-title">New Expense</h1>
+        {/* Subtitle added here */}
+        <p className="page-subtitle">Enter the details of your new expense</p>
       </div>
 
       <div className="content-wrapper">

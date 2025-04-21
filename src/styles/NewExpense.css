@@ -9,6 +9,17 @@ body {
   color: #333;
 }
 
+/* New Expense Page Subtitle Styling */
+.page-subtitle {
+  font-size: 1.1rem;
+  color: #555;
+  font-weight: 400;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  font-family: "Merriweather", serif;
+}
+
+
 /* Title Section */
 .title-wrapper {
   margin-left: -10px;
