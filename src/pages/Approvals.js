@@ -44,6 +44,7 @@ const Approvals = () => {
   return (
     <div className="approvals-container">
       <h2>Pending Approvals</h2>
+      <p className="approvals-subtitle">Review and take action on employee-submitted expense requests.</p>
       <div className="approval-list">
         {approvals.map((expense) => (
           <div

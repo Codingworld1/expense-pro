@@ -5,12 +5,14 @@ import cashbag from "../assets/cashbag.png";
 import analytics from "../assets/analytics.png";
 import target from "../assets/target.png";
 import approval from "../assets/approval.png";
+import ForgotPasswordModal from "./ForgotPasswordModal"; // Import the ForgotPasswordModal component
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const [isEmployee, setIsEmployee] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showForgotModal, setShowForgotModal] = useState(false); // State for controlling modal visibility
 
   const handleLogin = (event) => {
     event.preventDefault();
@@ -24,7 +26,6 @@ const LandingPage = () => {
 
   return (
     <>
-      {/* Main Content */}
       <main className="landing-container">
         {/* Left Section */}
         <section className="left-section">
@@ -35,11 +36,7 @@ const LandingPage = () => {
           </p>
           <div className="features">
             <div className="feature left">
-              <img
-                src={cashbag}
-                alt="Money Bag"
-                className="feature-icon-onleft"
-              />
+              <img src={cashbag} alt="Money Bag" className="feature-icon-onleft" />
               <p className="aligned-left">
                 Manage and categorize expenses efficiently
               </p>
@@ -48,29 +45,17 @@ const LandingPage = () => {
               <p className="aligned-right">
                 Real-time Analytics and reports for financial decisions
               </p>
-              <img
-                src={analytics}
-                alt="Analytics"
-                className="feature-icon-onright"
-              />
+              <img src={analytics} alt="Analytics" className="feature-icon-onright" />
             </div>
             <div className="feature left">
-              <img
-                src={target}
-                alt="Target"
-                className="feature-icon-onright"
-              />
+              <img src={target} alt="Target" className="feature-icon-onright" />
               <p className="aligned-left">
                 Quick look at all the payments done through Dashboard
               </p>
             </div>
             <div className="feature right">
               <p className="aligned-right">Seamless Approvals for the Budget</p>
-              <img
-                src={approval}
-                alt="Approval"
-                className="feature-icon-onleft"
-              />
+              <img src={approval} alt="Approval" className="feature-icon-onleft" />
             </div>
           </div>
         </section>
@@ -124,14 +109,23 @@ const LandingPage = () => {
             <button type="submit" className="enter-btn">
               Enter
             </button>
-            <a href="/forgot-password" className="forgot-password">
+            <span
+              className="forgot-password"
+              onClick={() => setShowForgotModal(true)} // Open modal when clicked
+              style={{ cursor: "pointer" }}
+            >
               Forgot Password?
-            </a>
+            </span>
           </form>
         </section>
       </main>
 
-      {/* Footer Section */}
+      {/* Forgot Password Modal Component */}
+      <ForgotPasswordModal
+        showModal={showForgotModal} // Ensure prop names match
+        toggleModal={() => setShowForgotModal(false)} // Close modal when triggered
+      />
+
       <div className="landing-footer-wrapper">
         <footer className="landing-footer">
           <p>© 2025 Expense Pro. All rights reserved.</p>

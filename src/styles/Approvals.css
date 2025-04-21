@@ -1,9 +1,16 @@
 .approvals-container h2 {
     font-size: 2rem;
-    margin-top: 0px;
+    margin-top: 25px;
     margin-bottom: 40px;
     color: #333;
     font-weight: 600;
+  }
+  
+  .approvals-subtitle {
+    color: #555;
+    font-size: 1rem;
+    margin-top: -20px;  /* Adjust as needed for spacing */
+    margin-bottom: 30px;
   }
   
   

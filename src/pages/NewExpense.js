@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Upload } from "lucide-react";
 import "../styles/NewExpense.css";
+import Toast from "./Toast";
 
 const NewExpense = () => {
   const [description, setDescription] = useState("");
@@ -8,10 +9,13 @@ const NewExpense = () => {
   const [category, setCategory] = useState("");
   const [date, setDate] = useState("");
   const [attachments, setAttachments] = useState(null);
+  const [dragOver, setDragOver] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log({ description, amount, category, date, attachments });
+    setToastMessage("Expense Submitted Successfully!");
   };
 
   const handleClear = () => {
@@ -22,20 +26,31 @@ const NewExpense = () => {
     setAttachments(null);
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragOver(false);
+    setAttachments(e.dataTransfer.files);
+  };
+
   return (
-    <div className="main-container">
+    <div className="expense-container">
       <div className="title-wrapper">
         <h1 className="page-title">New Expense</h1>
-        {/* Subtitle added here */}
         <p className="page-subtitle">Enter the details of your new expense</p>
       </div>
-
       <div className="content-wrapper">
         <main className="main-content">
           <div className="form-container">
             <form onSubmit={handleSubmit} className="expense-form">
-              <h2 className="form-title">Expense Details</h2>
-
               <div className="form-grid">
                 <div className="form-group">
                   <label>Description</label>
@@ -88,13 +103,19 @@ const NewExpense = () => {
 
               <div className="form-group full-width">
                 <label>Attachments</label>
-                <div className="upload-box">
+                <div
+                  className={`upload-box ${dragOver ? "drag-over" : ""}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
                   <Upload size={32} />
                   <input
                     type="file"
                     onChange={(e) => setAttachments(e.target.files)}
                     className="hidden"
                   />
+                  <span>Drag & Drop files here or click to upload</span>
                 </div>
               </div>
 
@@ -114,6 +135,8 @@ const NewExpense = () => {
           </div>
         </main>
       </div>
+
+      {toastMessage && <Toast message={toastMessage} />}
     </div>
   );
 };

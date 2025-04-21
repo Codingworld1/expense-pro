@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../styles/Dashboard.css"; // Keep this for styling
+import "../styles/Dashboard.css"; // You can rename this too if needed
 
 const getStatusIcon = (status) => {
   switch (status) {
@@ -45,65 +45,67 @@ const DashboardManager = () => {
   };
 
   return (
-    <div className="dashboard-container">
-      <div className="dashboard-header"></div>
+    <div className="dm-dashboard-container">
+      {/* Dashboard Header (removed sidebar related content) */}
+      <div className="dm-dashboard-header"></div>
 
-      <div className="summary-cards">
-        <div className="summary-card">
-          <h3 className="card-label">Total Expenses</h3>
-          <p className="card-value">₹ 10,000</p>
+      {/* Summary Cards Section */}
+      <div className="dm-summary-cards">
+        <div className="dm-summary-card">
+          <h3 className="dm-card-label">Total Expenses</h3>
+          <p className="dm-card-value">₹ 10,000</p>
         </div>
-        <div className="summary-card">
-          <h3 className="card-label">Pending Approval</h3>
-          <p className="card-value">{pendingApprovals.length}</p>
+        <div className="dm-summary-card">
+          <h3 className="dm-card-label">Pending Approval</h3>
+          <p className="dm-card-value">{pendingApprovals.length}</p>
         </div>
-        <div className="summary-card">
-          <h3 className="card-label">Expenses this Month</h3>
-          <p className="card-value">₹ 1,000</p>
+        <div className="dm-summary-card">
+          <h3 className="dm-card-label">Expenses this Month</h3>
+          <p className="dm-card-value">₹ 1,000</p>
         </div>
-        <div className="summary-card">
-          <h3 className="card-label">Budget Utilized</h3>
-          <p className="card-value">42%</p>
+        <div className="dm-summary-card">
+          <h3 className="dm-card-label">Budget Utilized</h3>
+          <p className="dm-card-value">42%</p>
         </div>
       </div>
 
       {/* Recent Expenses Section */}
-      <div className="recent-expenses" style={{ flex: 1 }}>
-        <div className="expenses-header">
-          <h2 className="expenses-title">Recent Expenses</h2>
-          <button className="view-all-btn">View all</button>
+      <div className="dm-section dm-recent-expenses">
+        <div className="dm-expenses-header">
+          <h2 className="dm-expenses-title">Recent Expenses</h2>
+          <button className="dm-view-all-btn">View all</button>
         </div>
-        <div className="expenses-list">
+        <div className="dm-expenses-list">
           {recentExpenses.map((expense) => (
-            <div className="expense-item" key={expense.id}>
-              <div className="expense-name">{expense.name}</div>
-              <div className="expense-status">{getStatusIcon(expense.status)}</div>
-              <div className="expense-amount">₹{expense.amount}</div>
+            <div className="dm-expense-item" key={expense.id}>
+              <div className="dm-expense-name">{expense.name}</div>
+              <div className="dm-expense-status">{getStatusIcon(expense.status)}</div>
+              <div className="dm-expense-amount">₹{expense.amount}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Approvals Section */}
-      <div className="recent-expenses" style={{ flex: 1 }}>
-        <div className="expenses-header">
-          <h2 className="expenses-title">Your Approvals</h2>
+      <div className="dm-section dm-approvals">
+        <div className="dm-expenses-header">
+          <h2 className="dm-expenses-title">Your Approvals</h2>
         </div>
 
         {pendingApprovals.length > 0 ? (
-          <div className="expenses-list">
+          <div className="dm-approval-list">
             {pendingApprovals.map((approval) => (
-              <div key={approval.id} className="approval-item">
-                <div className="approval-name">{approval.name}</div>
-                <div className="approval-info">
+              <div key={approval.id} className="dm-approval-item">
+                <div className="dm-approval-name">{approval.name}</div>
+                <div className="dm-approval-info">
                   Submitted by {approval.submittedBy} • {approval.daysAgo} days ago
                 </div>
-                <div className="approval-actions">
-                  <span className="approval-amount">₹{approval.amount}</span>
-                  <button className="approve-btn" onClick={() => handleApprove(approval.id)}>
+                <div className="dm-approval-actions">
+                  <span className="dm-approval-amount">₹{approval.amount}</span>
+                  <button className="dm-approve-btn" onClick={() => handleApprove(approval.id)}>
                     Approve
                   </button>
-                  <button className="reject-btn" onClick={() => handleReject(approval.id)}>
+                  <button className="dm-reject-btn" onClick={() => handleReject(approval.id)}>
                     Reject
                   </button>
                 </div>
@@ -111,7 +113,7 @@ const DashboardManager = () => {
             ))}
           </div>
         ) : (
-          <div className="no-approvals">No pending approvals</div>
+          <div className="dm-no-approvals">No pending approvals</div>
         )}
       </div>
     </div>
