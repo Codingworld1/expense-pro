@@ -43,6 +43,7 @@ const ManagerSidebar = () => {
           <span>Log out</span>
         </button>
       </div>
+
     </aside>
   );
 };

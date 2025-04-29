@@ -88,7 +88,6 @@ const LandingPage = () => {
                 type="email"
                 id="email"
                 className="form-input"
-                placeholder="eg.sonu12@mail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -100,7 +99,6 @@ const LandingPage = () => {
                 type="password"
                 id="password"
                 className="form-input"
-                placeholder="Minimum 8 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required

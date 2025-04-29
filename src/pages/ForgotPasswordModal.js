@@ -4,18 +4,30 @@ import "../styles/ForgotPasswordModal.css";
 const ForgotPasswordModal = ({ showModal, toggleModal }) => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (showModal) {
       setEmail("");
       setSubmitted(false);
+      setErrorMessage("");
     }
   }, [showModal]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email) {
+    if (!email) return;
+
+    // Simulated backend check (you can replace this with an actual API call)
+    const registeredEmails = ["john@example.com", "jane@example.com"]; // Dummy list
+    const isRegistered = registeredEmails.includes(email.trim().toLowerCase());
+
+    if (isRegistered) {
       setSubmitted(true);
+      setErrorMessage("");
+      // Here you would trigger backend to send the reset email
+    } else {
+      setErrorMessage("This email is not registered with us.");
     }
   };
 
@@ -60,6 +72,9 @@ const ForgotPasswordModal = ({ showModal, toggleModal }) => {
                   required
                 />
               </div>
+              {errorMessage && (
+                <p className="forgot-password-error-message">{errorMessage}</p>
+              )}
               <button type="submit" className="forgot-password-modal-submit-btn">
                 Submit
               </button>
