@@ -6,9 +6,11 @@ import "./Sidebar.css";
 const ManagerSidebar = () => {
   const navigate = useNavigate();
 
+  // Function to handle logout
   const handleLogout = () => {
-    localStorage.removeItem("userRole");
-    navigate("/");
+    localStorage.removeItem("userRole");  // Remove user role from localStorage
+    localStorage.removeItem("token");  // Remove JWT token
+    navigate("/");  // Redirect to the landing page (or login page)
   };
 
   return (

@@ -5,22 +5,60 @@ import cashbag from "../assets/cashbag.png";
 import analytics from "../assets/analytics.png";
 import target from "../assets/target.png";
 import approval from "../assets/approval.png";
-import ForgotPasswordModal from "./ForgotPasswordModal"; // Import the ForgotPasswordModal component
+import ForgotPasswordModal from "./ForgotPasswordModal";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const [isEmployee, setIsEmployee] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showForgotModal, setShowForgotModal] = useState(false); // State for controlling modal visibility
+  const [error, setError] = useState("");
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
-    if (email && password) {
-      localStorage.setItem("userRole", isEmployee ? "employee" : "manager");
-      navigate(isEmployee ? "/employee/dashboard" : "/manager/dashboard");
-    } else {
-      alert("Please enter both email and password.");
+
+    // Basic validation before sending request
+    if (!email && !password) {
+      setError("Please enter both email and password.");
+      return;
+    } else if (!email) {
+      setError("Please enter your email.");
+      return;
+    } else if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+
+    setLoading(true);
+    setError(""); // Clear previous errors
+
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.status === 200) {
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userRole", isEmployee ? "employee" : "manager");
+        navigate(isEmployee ? "/employee/dashboard" : "/manager/dashboard");
+      } else if (response.status === 401) {
+        const result = await response.json();
+        setError(result.message || "Invalid email or password");
+      } else {
+        setError("An error occurred. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -90,7 +128,6 @@ const LandingPage = () => {
                 className="form-input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
             </div>
             <div className="form-group">
@@ -101,15 +138,15 @@ const LandingPage = () => {
                 className="form-input"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
               />
             </div>
-            <button type="submit" className="enter-btn">
-              Enter
+            <button type="submit" className="enter-btn" disabled={loading}>
+              {loading ? "Logging In..." : "Enter"}
             </button>
+            {error && <p className="error-message">{error}</p>}
             <span
               className="forgot-password"
-              onClick={() => setShowForgotModal(true)} // Open modal when clicked
+              onClick={() => setShowForgotModal(true)}
               style={{ cursor: "pointer" }}
             >
               Forgot Password?
@@ -118,10 +155,10 @@ const LandingPage = () => {
         </section>
       </main>
 
-      {/* Forgot Password Modal Component */}
+      {/* Forgot Password Modal */}
       <ForgotPasswordModal
-        showModal={showForgotModal} // Ensure prop names match
-        toggleModal={() => setShowForgotModal(false)} // Close modal when triggered
+        showModal={showForgotModal}
+        toggleModal={() => setShowForgotModal(false)}
       />
 
       <div className="landing-footer-wrapper">

@@ -16,18 +16,32 @@ const ForgotPasswordModal = ({ showModal, toggleModal }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email) return;
 
-    // Simulated backend check (you can replace this with an actual API call)
-    const registeredEmails = ["john@example.com", "jane@example.com"]; // Dummy list
-    const isRegistered = registeredEmails.includes(email.trim().toLowerCase());
+    if (!email.trim()) {
+      setErrorMessage("Please enter your email.");
+      return;
+    }
 
-    if (isRegistered) {
-      setSubmitted(true);
-      setErrorMessage("");
-      // Here you would trigger backend to send the reset email
-    } else {
-      setErrorMessage("This email is not registered with us.");
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+        setErrorMessage("");
+      } else if (response.status === 404) {
+        setErrorMessage("This email is not registered with us.");
+      } else {
+        setErrorMessage("Something went wrong. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Error submitting forgot password:", error);
+      setErrorMessage("Failed to connect to the server.");
     }
   };
 
@@ -56,8 +70,7 @@ const ForgotPasswordModal = ({ showModal, toggleModal }) => {
         ) : (
           <>
             <p className="forgot-password-modal-instruction">
-              Please enter your registered email address below, and we will send
-              you a password reset link.
+              Please enter your registered email address
             </p>
             <form className="forgot-password-modal-form" onSubmit={handleSubmit}>
               <div className="form-group">
@@ -66,10 +79,8 @@ const ForgotPasswordModal = ({ showModal, toggleModal }) => {
                   type="email"
                   id="email"
                   className="forgot-password-modal-input"
-                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required
                 />
               </div>
               {errorMessage && (

@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import DashboardLayout from "./layouts/DashboardLayout";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 // Manager pages
 import ManagerDashboard from "./pages/ManagerDashboard";
@@ -25,6 +26,7 @@ const App = () => {
       <Routes>
         {/* Landing/Login Page */}
         <Route path="/" element={<Landing />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         {/* Manager Routes */}
         <Route path="/manager" element={<DashboardLayout />}>

@@ -6,9 +6,11 @@ import "./Sidebar.css";
 const EmployeeSidebar = () => {
   const navigate = useNavigate();
 
+  // Function to handle logout
   const handleLogout = () => {
-    localStorage.removeItem("userRole");
-    navigate("/");
+    localStorage.removeItem("userRole");  // Remove user role from localStorage
+    localStorage.removeItem("token");  // Remove JWT token
+    navigate("/");  // Redirect to the landing page (or login page)
   };
 
   return (
@@ -26,6 +28,7 @@ const EmployeeSidebar = () => {
         </NavLink>
       </nav>
       <div className="sidebar-bottom">
+        {/* Logout Button */}
         <button className="logout-btn" onClick={handleLogout}>
           <LogOut size={16} className="logout-icon" />
           <span>Log out</span>
