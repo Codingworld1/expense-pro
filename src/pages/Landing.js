@@ -6,6 +6,8 @@ import cashbag from "../assets/cashbag.png";
 import analytics from "../assets/analytics.png";
 import target from "../assets/target.png";
 import approval from "../assets/approval.png";
+import googleIcon from "../assets/google.png";
+import githubIcon from "../assets/github.png";
 import ForgotPasswordModal from "./ForgotPasswordModal";
 
 const LandingPage = () => {
@@ -174,7 +176,7 @@ const LandingPage = () => {
                 }}
                 disabled={loading}
               >
-                <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google" />
+                <img src={googleIcon} alt="Google" />
                 Google
               </button>
 
@@ -189,7 +191,7 @@ const LandingPage = () => {
                 }}
                 disabled={loading}
               >
-                <img src="https://img.icons8.com/ios-glyphs/16/000000/github.png" alt="GitHub" />
+                <img src={githubIcon} alt="GitHub" />
                 GitHub
               </button>
             </div>
