@@ -53,7 +53,7 @@ const Expenses = () => {
 
   return (
     <div className="expenses-container">
-      <h2 className="expenses-heading">Expenses</h2>
+      <h2 className="expenses-heading">My Expenses</h2>
       <p className="expenses-para">Track and manage your expenses</p>
 
       <div className="expenses-controls">

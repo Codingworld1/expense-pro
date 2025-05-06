@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../styles/Initial.css";
 import cashbag from "../assets/cashbag.png";
 import analytics from "../assets/analytics.png";
@@ -19,7 +20,6 @@ const LandingPage = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    // Basic validation before sending request
     if (!email && !password) {
       setError("Please enter both email and password.");
       return;
@@ -32,31 +32,26 @@ const LandingPage = () => {
     }
 
     setLoading(true);
-    setError(""); // Clear previous errors
+    setError("");
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
+      const response = await axios.post("http://localhost:8080/api/auth/login", {
+        email,
+        password,
+        role: isEmployee ? "EMPLOYEE" : "MANAGER",
       });
 
-      if (response.status === 200) {
-        const data = await response.json();
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("userRole", isEmployee ? "employee" : "manager");
-        navigate(isEmployee ? "/employee/dashboard" : "/manager/dashboard");
-      } else if (response.status === 401) {
-        const result = await response.json();
-        setError(result.message || "Invalid email or password");
+      const data = response.data;
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userRole", isEmployee ? "employee" : "manager");
+      navigate(isEmployee ? "/employee/dashboard" : "/manager/dashboard");
+    } catch (error) {
+      console.error("Error during login:", error);
+      if (error.response && error.response.status === 401) {
+        setError(error.response.data.message || "Invalid email or password");
       } else {
         setError("An error occurred. Please try again.");
       }
-    } catch (error) {
-      console.error("Error during login:", error);
-      setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -108,6 +103,7 @@ const LandingPage = () => {
               className={`toggle-btn ${isEmployee ? "active" : ""}`}
               onClick={() => setIsEmployee(true)}
               type="button"
+              disabled={loading}
             >
               Employee
             </button>
@@ -115,6 +111,7 @@ const LandingPage = () => {
               className={`toggle-btn ${!isEmployee ? "active" : ""}`}
               onClick={() => setIsEmployee(false)}
               type="button"
+              disabled={loading}
             >
               Manager
             </button>
@@ -128,6 +125,7 @@ const LandingPage = () => {
                 className="form-input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
               />
             </div>
             <div className="form-group">
@@ -138,24 +136,67 @@ const LandingPage = () => {
                 className="form-input"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
               />
             </div>
             <button type="submit" className="enter-btn" disabled={loading}>
-              {loading ? "Logging In..." : "Enter"}
+              {loading ? (
+                <>
+                  <span className="loading-spinner"></span>
+                  <span className="loading-text">Logging In...</span>
+                </>
+              ) : (
+                "Enter"
+              )}
             </button>
             {error && <p className="error-message">{error}</p>}
             <span
               className="forgot-password"
-              onClick={() => setShowForgotModal(true)}
-              style={{ cursor: "pointer" }}
+              onClick={() => !loading && setShowForgotModal(true)}
+              style={{
+                cursor: loading ? "not-allowed" : "pointer",
+                pointerEvents: loading ? "none" : "auto",
+              }}
             >
               Forgot Password?
             </span>
           </form>
+          <div className="oauth-container">
+            <p className="oauth-text">Or sign in with</p>
+            <div className="oauth-buttons-row">
+              <button
+                type="button"
+                className={`oauth-btn transparent-btn ${loading ? "disabled" : ""}`}
+                onClick={() => {
+                  if (!loading) {
+                    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+                  }
+                }}
+                disabled={loading}
+              >
+                <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google" />
+                Google
+              </button>
+
+              <div className="oauth-divider">|</div>
+              <button
+                type="button"
+                className={`oauth-btn transparent-btn ${loading ? "disabled" : ""}`}
+                onClick={() => {
+                  if (!loading) {
+                    window.location.href = "http://localhost:8080/oauth2/authorization/github";
+                  }
+                }}
+                disabled={loading}
+              >
+                <img src="https://img.icons8.com/ios-glyphs/16/000000/github.png" alt="GitHub" />
+                GitHub
+              </button>
+            </div>
+          </div>
         </section>
       </main>
 
-      {/* Forgot Password Modal */}
       <ForgotPasswordModal
         showModal={showForgotModal}
         toggleModal={() => setShowForgotModal(false)}

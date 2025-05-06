@@ -260,3 +260,84 @@ body {
   font-size: 14px;
   margin-top: 10px;
 }
+.oauth-btn.transparent-btn img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain; /* Ensures the image scales properly without distortion */
+}
+.oauth-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.oauth-text {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.oauth-buttons-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.oauth-divider {
+  color: #ccc;
+  font-weight: bold;
+}
+
+.oauth-btn.transparent-btn {
+  font-family: 'Merriweather', serif;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border: 2px solid orange;
+  border-radius: 8px;
+  background-color: transparent;
+  color: orange;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.oauth-btn.transparent-btn:hover {
+  background-color: rgba(255, 165, 0, 0.1); /* subtle orange tint on hover */
+  border-color: darkorange;
+  color: darkorange;
+  transform: scale(1.05); /* Slight expansion on hover */
+}
+.oauth-btn.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff;
+  border-top: 2px solid #888;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.loading-text {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
+
+
