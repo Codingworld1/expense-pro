@@ -1,92 +1,134 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "../styles/Approvals.css";
 
 const Approvals = () => {
+  const [approvals, setApprovals] = useState([]);
   const [expandedId, setExpandedId] = useState(null);
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
 
-  const approvals = [
-    {
-      id: 1,
-      employee: "Arjun Reddy",
-      amount: "₹3,200",
-      category: "Client Meeting",
-      date: "2025-04-05",
-      status: "Pending",
-      description: "Lunch meeting with client at The Park.",
-      attachment: "/uploads/receipt1.pdf",
-    },
-    {
-      id: 2,
-      employee: "Priya Sharma",
-      amount: "₹1,850",
-      category: "Travel",
-      date: "2025-04-08",
-      status: "Pending",
-      description: "Cab from airport to office",
-      attachment: "",
-    },
-    {
-      id: 3,
-      employee: "Ravi Kumar",
-      amount: "₹950",
-      category: "Office Supplies",
-      date: "2025-04-09",
-      status: "Pending",
-      description: "Printer ink and A4 paper",
-      attachment: "/uploads/receipt3.pdf",
-    },
-  ];
+  const fetchApprovals = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/expenses/pending", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setApprovals(response.data);
+    } catch (error) {
+      console.error("Error fetching pending approvals:", error);
+    }
+  };
+
+  const updateStatus = async (id, status) => {
+    try {
+      await axios.patch(
+        `http://localhost:8080/api/expenses/${id}/status`,
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // Refresh the list after updating
+      fetchApprovals();
+    } catch (error) {
+      console.error(`Error updating status to ${status} for ID ${id}:`, error);
+    }
+  };
+
+  const parseAttachments = (attachmentString) => {
+    if (!attachmentString) return [];
+    try {
+      return JSON.parse(attachmentString);
+    } catch {
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    fetchApprovals();
+  }, []);
 
   return (
     <div className="approvals-container">
       <h2>Pending Approvals</h2>
-      <p className="approvals-subtitle">Review and take action on employee-submitted expense requests.</p>
+      <p className="approvals-subtitle">
+        Review and take action on employee-submitted expense requests.
+      </p>
       <div className="approval-list">
-        {approvals.map((expense) => (
-          <div
-            key={expense.id}
-            className={`approval-item ${expandedId === expense.id ? "expanded" : ""}`}
-            onClick={() => toggleExpand(expense.id)}
-          >
-            <div className="approval-top">
-              <div className="approval-info">
-                <h4>{expense.employee}</h4>
-                <p>{expense.category}</p>
-                <p>{expense.date}</p>
-              </div>
-              <div className="approval-meta">
-                <span className="amount">{expense.amount}</span>
-                <div className="approval-actions">
-                  <button className="approve-btn" onClick={(e) => e.stopPropagation()}>
-                    Approve
-                  </button>
-                  <button className="reject-btn" onClick={(e) => e.stopPropagation()}>
-                    Reject
-                  </button>
+        {approvals.map((expense) => {
+          const attachments = parseAttachments(expense.attachments);
+          return (
+            <div
+              key={expense.id}
+              className={`approval-item ${expandedId === expense.id ? "expanded" : ""}`}
+            >
+              {/* Toggle expand only on this top section */}
+              <div className="approval-top" onClick={() => toggleExpand(expense.id)}>
+                <div className="approval-info">
+                  <h4>{expense.userName || "Employee"}</h4>
+                  <p>{expense.category}</p>
+                  <p>{expense.date}</p>
+                </div>
+                <div className="approval-meta">
+                  <span className="amount">₹{expense.amount}</span>
+                  <div className="approval-actions">
+                    <button
+                      className="approve-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateStatus(expense.id, "APPROVED");
+                      }}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="reject-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateStatus(expense.id, "REJECTED");
+                      }}
+                    >
+                      Reject
+                    </button>
+                  </div>
                 </div>
               </div>
+
+              {expandedId === expense.id && (
+                <div className="approval-details">
+                  <p>
+                    <strong>Description:</strong> {expense.description}
+                  </p>
+                  <p>
+                    <strong>Attachment:</strong>{" "}
+                    {attachments.length > 0 ? (
+                      attachments.map((url, i) => (
+                        <a
+                          key={i}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ display: "block", marginTop: "4px" }}
+                        >
+                          View Attachment {i + 1}
+                        </a>
+                      ))
+                    ) : (
+                      "None"
+                    )}
+                  </p>
+                </div>
+              )}
             </div>
-            <div className="approval-details">
-              <p>
-                <strong>Description:</strong> {expense.description}
-              </p>
-              <p>
-                <strong>Attachment:</strong>{" "}
-                {expense.attachment ? (
-                  <a href={expense.attachment} target="_blank" rel="noopener noreferrer">
-                    View Attachment
-                  </a>
-                ) : (
-                  "None"
-                )}
-              </p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
