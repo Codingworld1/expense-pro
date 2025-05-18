@@ -1,53 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "../styles/Expenses.css";
 
 const Expenses = () => {
   const [filter, setFilter] = useState("All");
   const [expandedId, setExpandedId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [expenses, setExpenses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
 
-  const expenses = [
-    {
-      id: 1,
-      description: "Team lunch",
-      amount: "₹1200",
-      category: "Food",
-      date: "2025-04-06",
-      status: "Approved",
-      notes: "Lunch at The Leela with the marketing team",
-    },
-    {
-      id: 2,
-      description: "Airport cab",
-      amount: "₹850",
-      category: "Travel",
-      date: "2025-04-08",
-      status: "Pending",
-      notes: "Ola ride from airport to office",
-    },
-    {
-      id: 3,
-      description: "Printer ink",
-      amount: "₹500",
-      category: "Office Supplies",
-      date: "2025-04-09",
-      status: "Rejected",
-      notes: "Bought ink for HP printer",
-    },
-  ];
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("token");
+        const response = await axios.get("http://localhost:8080/api/expenses", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true, // optional for OAuth session cookies
+        });
+        console.log("Response data:", response.data);
+        if (Array.isArray(response.data)) {
+          setExpenses(response.data);
+          setError(null);
+        } else {
+          setError("Invalid data format from server");
+          setExpenses([]);
+        }
+      } catch (err) {
+        console.error("Error fetching expenses:", err);
+        setError("Failed to load expenses.");
+        setExpenses([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Filter and search (case-insensitive)
-  const filteredExpenses = expenses.filter((exp) => {
-    const matchesFilter = filter === "All" || exp.status === filter;
+    fetchExpenses();
+  }, []);
+
+  // Filter and search (case-insensitive), safely handle undefined
+  const filteredExpenses = (expenses || []).filter((exp) => {
+    const expStatus = (exp.status || "").toLowerCase();
+    const currentFilter = filter.toLowerCase();
+
+    const matchesFilter = filter === "All" || expStatus === currentFilter;
     const search = searchQuery.toLowerCase();
+
     const matchesSearch =
-      exp.description.toLowerCase().includes(search) ||
-      exp.category.toLowerCase().includes(search) ||
-      exp.date.includes(search);
+      (exp.description || "").toLowerCase().includes(search) ||
+      (exp.category || "").toLowerCase().includes(search) ||
+      (exp.date || "").includes(search);
+
     return matchesFilter && matchesSearch;
   });
 
@@ -65,15 +75,26 @@ const Expenses = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <div className="filters">
-          <button className="all-btn" onClick={() => setFilter("All")}>All</button>
-          <button className="approved-btn" onClick={() => setFilter("Approved")}>Approved</button>
-          <button className="pending-btn" onClick={() => setFilter("Pending")}>Pending</button>
-          <button className="rejected-btn" onClick={() => setFilter("Rejected")}>Rejected</button>
+          <button className="all-btn" onClick={() => setFilter("All")}>
+            All
+          </button>
+          <button className="approved-btn" onClick={() => setFilter("Approved")}>
+            Approved
+          </button>
+          <button className="pending-btn" onClick={() => setFilter("Pending")}>
+            Pending
+          </button>
+          <button className="rejected-btn" onClick={() => setFilter("Rejected")}>
+            Rejected
+          </button>
         </div>
       </div>
 
+      {loading && <p>Loading expenses...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
       <div className="expense-list">
-        {filteredExpenses.length > 0 ? (
+        {!loading && filteredExpenses.length > 0 ? (
           filteredExpenses.map((expense) => (
             <div
               key={expense.id}
@@ -82,24 +103,32 @@ const Expenses = () => {
             >
               <div className="expense-top">
                 <div className="expense-info">
-                  <h4>{expense.description}</h4>
-                  <p>{expense.category}</p>
-                  <p>{expense.date}</p>
-                  <span className="amount">{expense.amount}</span>
+                  <h4>{expense.description || "No Description"}</h4>
+                  <p>{expense.category || "No Category"}</p>
+                  <p>{expense.date || "No Date"}</p>
+                  <span className="amount">₹{expense.amount ?? "0"}</span>
                 </div>
                 <div className="expense-meta">
-                  <p className={`status-${expense.status.toLowerCase()}`}>{expense.status}</p>
+                  <p className={`status-${(expense.status || "").toLowerCase()}`}>
+                    {expense.status || "Unknown"}
+                  </p>
                 </div>
               </div>
-              <div className="expense-details">
-                <p><strong>Notes:</strong> {expense.notes}</p>
-              </div>
+              {expandedId === expense.id && (
+                <div className="expense-details">
+                  <p>
+                    <strong>Notes:</strong> {expense.notes || "No notes available."}
+                  </p>
+                </div>
+              )}
             </div>
           ))
         ) : (
-          <p style={{ color: "#999", fontStyle: "italic", marginTop: "20px" }}>
-            No such expense found.
-          </p>
+          !loading && (
+            <p style={{ color: "#999", fontStyle: "italic", marginTop: "20px" }}>
+              No such expense found.
+            </p>
+          )
         )}
       </div>
     </div>

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "../styles/ForgotPasswordModal.css";
 
 const ForgotPasswordModal = ({ showModal, toggleModal }) => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Track loading state
 
   useEffect(() => {
     if (showModal) {
@@ -22,26 +24,22 @@ const ForgotPasswordModal = ({ showModal, toggleModal }) => {
       return;
     }
 
+    setIsLoading(true); // Start loading
+
     try {
-      const response = await fetch("http://localhost:8080/api/auth/forgot-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      const response = await axios.post("http://localhost:8080/api/auth/forgot-password", {
+        email: email.trim().toLowerCase(),
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         setSubmitted(true);
         setErrorMessage("");
-      } else if (response.status === 404) {
-        setErrorMessage("This email is not registered with us.");
-      } else {
-        setErrorMessage("Something went wrong. Please try again later.");
       }
     } catch (error) {
       console.error("Error submitting forgot password:", error);
       setErrorMessage("Failed to connect to the server.");
+    } finally {
+      setIsLoading(false); // Stop loading after the request
     }
   };
 
@@ -86,9 +84,17 @@ const ForgotPasswordModal = ({ showModal, toggleModal }) => {
               {errorMessage && (
                 <p className="forgot-password-error-message">{errorMessage}</p>
               )}
-              <button type="submit" className="forgot-password-modal-submit-btn">
-                Submit
-              </button>
+              <div className="form-group">
+                {isLoading ? (
+                  <div className="loading-spinner-container">
+                    <div className="loading-spinner"></div>
+                  </div>
+                ) : (
+                  <button type="submit" className="forgot-password-modal-submit-btn">
+                    Submit
+                  </button>
+                )}
+              </div>
             </form>
           </>
         )}

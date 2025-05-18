@@ -289,6 +289,7 @@ body {
 }
 
 .oauth-btn.transparent-btn {
+  cursor: pointer;
   font-family: 'Merriweather', serif;
   display: flex;
   align-items: center;

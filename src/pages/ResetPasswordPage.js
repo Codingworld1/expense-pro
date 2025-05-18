@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import axios from "axios";  // Import axios
 import "../styles/ResetPasswordPage.css"; // Updated styles
 
 const ResetPasswordPage = () => {
@@ -13,6 +14,7 @@ const ResetPasswordPage = () => {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [generalError, setGeneralError] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);  // Loading state
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,21 +46,24 @@ const ResetPasswordPage = () => {
 
     if (hasError) return;
 
-    try {
-      const response = await fetch("http://localhost:8080/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword: password }),
-      });
+    setLoading(true);  // Start loading
 
-      if (response.ok) {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/reset-password",
+        { token, newPassword: password }
+      );
+
+      if (response.status === 200) {
         setMessage("Password reset successful! You can now log in with your new password.");
       } else {
-        const data = await response.text();
-        setGeneralError(data || "Failed to reset password.");
+        setGeneralError(response.data || "Failed to reset password.");
       }
     } catch (err) {
       setGeneralError("Something went wrong. Please try again.");
+      console.error("Error resetting password:", err);
+    } finally {
+      setLoading(false);  // End loading
     }
   };
 
@@ -97,7 +102,9 @@ const ResetPasswordPage = () => {
             <p className="forgot-password-error-message">{generalError}</p>
           )}
 
-          <button type="submit">Reset Password</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Processing..." : "Reset Password"}
+          </button>
         </form>
       )}
     </div>

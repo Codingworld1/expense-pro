@@ -54,6 +54,7 @@ const LandingPage = () => {
       } else {
         setError("An error occurred. Please try again.");
       }
+      setPassword("");
     } finally {
       setLoading(false);
     }
