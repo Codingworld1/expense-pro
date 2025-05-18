@@ -18,14 +18,21 @@ const Expenses = () => {
     const fetchExpenses = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token"); // Retrieve token from localStorage
+
+        if (!token) {
+          throw new Error("No authentication token found. Please login.");
+        }
+
         const response = await axios.get("http://localhost:8080/api/expenses", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // Attach JWT token in header
           },
-          withCredentials: true, // optional for OAuth session cookies
+          // withCredentials: true, // Optional, only needed if cookies/sessions used for auth
         });
+
         console.log("Response data:", response.data);
+
         if (Array.isArray(response.data)) {
           setExpenses(response.data);
           setError(null);
@@ -35,7 +42,14 @@ const Expenses = () => {
         }
       } catch (err) {
         console.error("Error fetching expenses:", err);
-        setError("Failed to load expenses.");
+        // Differentiate between no token and other errors
+        if (err.message.includes("No authentication token")) {
+          setError(err.message);
+        } else if (err.response && err.response.status === 401) {
+          setError("Unauthorized. Please login again.");
+        } else {
+          setError("Failed to load expenses.");
+        }
         setExpenses([]);
       } finally {
         setLoading(false);
