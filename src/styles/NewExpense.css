@@ -149,25 +149,56 @@ select:focus {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  height: 70px;
-  border: 2px dashed #ccc;
+  min-height: 100px;
+  border: 2px dashed #aaa;
   border-radius: 8px;
   cursor: pointer;
   text-align: center;
   color: #666;
   position: relative;
+  padding: 20px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  user-select: none;
+  gap: 10px;
 }
 
-.upload-box span {
-  font-size: 0.75rem; /* Adjust this to reduce the size of the watermark text */
+.upload-box:hover {
+  border-color: #007bff;
+  background-color: #f0f8ff;
+  color: #007bff;
 }
 
+/* Drag over effect */
+.upload-box.drag-over {
+  background-color: #e6f7ff;
+  border-color: #3399ff;
+  color: #3399ff;
+}
+
+/* File input - keep hidden */
 .hidden {
   position: absolute;
   opacity: 0;
   width: 100%;
   height: 100%;
   cursor: pointer;
+}
+
+/* List of selected files below upload box */
+.attachments-list {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.attachments-list ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 5px;
+}
+
+.attachments-list li {
+  margin-bottom: 3px;
 }
 
 /* Buttons */

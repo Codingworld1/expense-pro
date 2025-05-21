@@ -19,7 +19,6 @@ const NewExpense = () => {
     e.preventDefault();
 
     try {
-      // Get token from localStorage (change if stored elsewhere)
       const token = localStorage.getItem("token");
 
       if (!token) {
@@ -30,10 +29,9 @@ const NewExpense = () => {
 
       const formData = new FormData();
 
-      // Prepare the expense data as JSON string
       const expenseData = {
         description,
-        amount: parseFloat(amount), // convert amount to number
+        amount: parseFloat(amount),
         category,
         date,
         notes,
@@ -44,7 +42,6 @@ const NewExpense = () => {
         new Blob([JSON.stringify(expenseData)], { type: "application/json" })
       );
 
-      // Append attachments if any
       if (attachments) {
         for (let i = 0; i < attachments.length; i++) {
           formData.append("attachments", attachments[i]);
@@ -52,23 +49,21 @@ const NewExpense = () => {
       }
 
       if (attachments && attachments.length > 0) {
-        // call with-attachments endpoint with token header
         await axios.post(
           "http://localhost:8080/api/expenses/with-attachments",
           formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`, // Add JWT token here
+              Authorization: `Bearer ${token}`,
             },
           }
         );
       } else {
-        // call normal create expense endpoint without attachments with token header
         await axios.post("http://localhost:8080/api/expenses", expenseData, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Add JWT token here
+            Authorization: `Bearer ${token}`,
           },
         });
       }
@@ -180,12 +175,12 @@ const NewExpense = () => {
 
               <div className="form-group full-width">
                 <label>Attachments</label>
-                <div
+                <label
+                  htmlFor="fileInput"
                   className={`upload-box ${dragOver ? "drag-over" : ""}`}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
-                  onClick={() => document.getElementById("fileInput").click()}
                   style={{ cursor: "pointer" }}
                 >
                   <Upload size={32} />
@@ -197,7 +192,8 @@ const NewExpense = () => {
                     className="hidden"
                   />
                   <span>Drag & Drop files here or click to upload</span>
-                </div>
+                </label>
+
                 {attachments && attachments.length > 0 && (
                   <div className="attachments-list">
                     <strong>Selected files:</strong>

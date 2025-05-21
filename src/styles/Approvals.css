@@ -1,130 +1,119 @@
 .approvals-container h2 {
-    font-size: 2rem;
-    margin-top: 25px;
-    margin-bottom: 40px;
-    color: #333;
-    font-weight: 600;
-  }
-  
-  .approvals-subtitle {
-    color: #555;
-    font-size: 1rem;
-    margin-top: -20px;  /* Adjust as needed for spacing */
-    margin-bottom: 30px;
-  }
-  
-  
-  .approval-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .approval-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #ffffff;
-    padding: 15px 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .approval-info h4 {
-    margin: 0 0 5px;
-    font-size: 1.1rem;
-  }
-  
-  .approval-info p {
-    margin: 2px 0;
-    color: #7f8c8d;
-    font-size: 0.9rem;
-  }
-  
-  .approval-meta {
-    text-align: right;
-  }
-  
-  .amount {
-    display: block;
-    font-weight: bold;
-    color: #34495e;
-    margin-bottom: 10px;
-  }
-  
-  .approval-actions {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .approve-btn {
-    background-color: #2ecc71;
-    color: white;
-    padding: 6px 14px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.2s ease;
-  }
-  
-  .reject-btn {
-    background-color: #e74c3c;
-    color: white;
-    padding: 6px 14px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.2s ease;
-  }
-  
-  .approve-btn:hover {
-    background-color: #27ae60;
-  }
-  
-  .reject-btn:hover {
-    background-color: #c0392b;
-  }
-  .approval-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    background-color: #ffffff;
-    padding: 15px 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    flex-direction: column;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .approval-top {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-  
-  .approval-details {
-    width: 100%;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-    color: #555;
-    margin-top: 0;
-  }
-  
-  .approval-item.expanded .approval-details {
-    max-height: 200px; /* Adjust if needed */
-    opacity: 1;
-    margin-top: 15px;
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-  }
-  
-  /* Prevent buttons from triggering expand */
-  .approve-btn,
-  .reject-btn {
-    pointer-events: auto;
-  }
-  
+  font-size: 2rem;
+  margin-top: 25px;
+  margin-bottom: 40px;
+  color: #333;
+  font-weight: 600;
+}
+
+.approvals-subtitle {
+  color: #555;
+  font-size: 1rem;
+  margin-top: -20px;
+  margin-bottom: 30px;
+}
+
+.approval-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.approval-item {
+  background-color: #ffffff;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.approval-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.approval-info h4 {
+  margin: 0 0 5px;
+  font-size: 1.1rem;
+}
+
+.approval-info p {
+  margin: 2px 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.approval-meta {
+  text-align: right;
+}
+
+.amount {
+  display: block;
+  font-weight: bold;
+  color: #34495e;
+  margin-bottom: 10px;
+}
+
+.approval-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.approve-btn,
+.reject-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  pointer-events: auto;
+}
+
+.approve-btn {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.reject-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.approve-btn:hover {
+  background-color: #27ae60;
+}
+
+.reject-btn:hover {
+  background-color: #c0392b;
+}
+
+.approval-details {
+  width: 100%;
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.approval-details p {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.attachment-link {
+  display: block;
+  margin-top: 5px;
+  color: #3498db;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.attachment-link:hover {
+  text-decoration: underline;
+}

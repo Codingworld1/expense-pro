@@ -97,7 +97,6 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-
 .expense-list {
   display: flex;
   flex-direction: column;
@@ -115,6 +114,10 @@
   cursor: pointer;
 }
 
+.expense-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 .expense-top {
   display: flex;
   justify-content: space-between;
@@ -129,6 +132,7 @@
 .expense-info h4 {
   margin: 0 0 5px;
   font-size: 1.1rem;
+  color: #2c3e50;
 }
 
 .expense-info p {
@@ -142,6 +146,7 @@
   font-weight: bold;
   color: #333;
   margin-top: 10px;
+  font-size: 1rem;
 }
 
 .expense-meta {
@@ -165,20 +170,43 @@
 }
 
 .expense-details {
-  width: 100%;
-  overflow: hidden;
-  max-height: 0;
+  height: 0;
   opacity: 0;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-  color: #555;
+  overflow: hidden;
   margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  transition:
+    height 0.4s ease,
+    opacity 0.4s ease,
+    margin-top 0.4s ease,
+    padding-top 0.4s ease,
+    border-top-width 0.4s ease;
 }
 
-.expense-item.expanded .expense-details {
-  max-height: 200px;
+.expense-details.expanded {
+  max-height: 500px;
   opacity: 1;
   margin-top: 15px;
-  border-top: 1px solid #eee;
   padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.attachments-section {
+  margin-top: 10px;
+}
+
+.attachments-list {
+  list-style: disc;
+  padding-left: 20px;
+  margin: 5px 0 0;
+}
+
+.attachments-list li a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.attachments-list li a:hover {
+  text-decoration: underline;
 }
