@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   BarChart,
   Bar,
@@ -15,28 +16,37 @@ import {
 import "../styles/Analytics.css";
 
 const Analytics = () => {
-  const expenseSummary = {
-    totalReports: 12,
-    totalExpenses: 250000,
-    totalApproved: 210000,
-    totalRejected: 40000,
-    avgPerReport: 20833,
-  };
+  const [summary, setSummary] = useState(null);
+  const [departmentWiseData, setDepartmentWiseData] = useState([]);
+  const [statusData, setStatusData] = useState([]);
 
-  const departmentWiseData = [
-    { name: "Sales", amount: 75000 },
-    { name: "Marketing", amount: 55000 },
-    { name: "Engineering", amount: 65000 },
-    { name: "HR", amount: 35000 },
-    { name: "Admin", amount: 20000 },
-  ];
+  //const userId = 3; // 🔹 Replace this with dynamic logged-in user ID (manager)
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
 
-  const statusData = [
-    { name: "Approved", value: 210000 },
-    { name: "Rejected", value: 40000 },
-  ];
+  useEffect(() => {
+    axios
+      .get(`/api/analytics/dashboard/${userId}`)
+      .then((res) => {
+        const data = res.data;
+        setSummary({
+          totalReports: data.totalReports,
+          totalExpenses: data.totalExpenses,
+          totalApproved: data.totalApproved,
+          totalRejected: data.totalRejected,
+          avgPerReport: data.avgPerReport,
+        });
+        setDepartmentWiseData(data.departmentExpenses);
+        setStatusData(data.statusExpenses);
+      })
+      .catch((err) => {
+        console.error("Error fetching analytics:", err);
+      });
+  }, [userId]);
 
   const COLORS = ["#00C49F", "#FF6B6B"];
+
+  if (!summary) return <p>Loading analytics...</p>;
 
   return (
     <div className="analytics-container">
@@ -46,23 +56,23 @@ const Analytics = () => {
       <div className="summary-cards">
         <div className="summary-card">
           <h3>Total Reports</h3>
-          <p>{expenseSummary.totalReports}</p>
+          <p>{summary.totalReports}</p>
         </div>
         <div className="summary-card">
           <h3>Total Expenses</h3>
-          <p>₹{expenseSummary.totalExpenses.toLocaleString()}</p>
+          <p>₹{summary.totalExpenses.toLocaleString()}</p>
         </div>
         <div className="summary-card">
           <h3>Total Approved</h3>
-          <p>₹{expenseSummary.totalApproved.toLocaleString()}</p>
+          <p>₹{summary.totalApproved.toLocaleString()}</p>
         </div>
         <div className="summary-card">
           <h3>Total Rejected</h3>
-          <p>₹{expenseSummary.totalRejected.toLocaleString()}</p>
+          <p>₹{summary.totalRejected.toLocaleString()}</p>
         </div>
         <div className="summary-card">
           <h3>Avg. Per Report</h3>
-          <p>₹{expenseSummary.avgPerReport.toLocaleString()}</p>
+          <p>₹{summary.avgPerReport.toLocaleString()}</p>
         </div>
       </div>
 
@@ -97,7 +107,7 @@ const Analytics = () => {
                 dataKey="value"
               >
                 {statusData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
               <Legend />
