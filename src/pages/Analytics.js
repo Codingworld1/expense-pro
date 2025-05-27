@@ -19,14 +19,18 @@ const Analytics = () => {
   const [summary, setSummary] = useState(null);
   const [departmentWiseData, setDepartmentWiseData] = useState([]);
   const [statusData, setStatusData] = useState([]);
-
-  //const userId = 3; // 🔹 Replace this with dynamic logged-in user ID (manager)
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?.id;
+  const [animateKey, setAnimateKey] = useState(0); // key to force rerender
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
     axios
-      .get(`/api/analytics/dashboard/${userId}`)
+      .get("http://localhost:8080/api/analytics/dashboard", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((res) => {
         const data = res.data;
         setSummary({
@@ -36,15 +40,18 @@ const Analytics = () => {
           totalRejected: data.totalRejected,
           avgPerReport: data.avgPerReport,
         });
-        setDepartmentWiseData(data.departmentExpenses);
-        setStatusData(data.statusExpenses);
+        setDepartmentWiseData(data.departmentWiseData);
+        setStatusData(data.statusData);
+
+        // Force a key change after data loads to trigger animation
+        setTimeout(() => setAnimateKey((prev) => prev + 1), 100);
       })
       .catch((err) => {
         console.error("Error fetching analytics:", err);
       });
-  }, [userId]);
+  }, []);
 
-  const COLORS = ["#00C49F", "#FF6B6B"];
+  const COLORS = ["#00C49F", "#FF6B6B", "#FFC107"];
 
   if (!summary) return <p>Loading analytics...</p>;
 
@@ -79,20 +86,26 @@ const Analytics = () => {
       <div className="chart-section">
         <div className="chart-container">
           <h4>Department-wise Expenses</h4>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} key={`bar-${animateKey}`}>
             <BarChart data={departmentWiseData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="amount" fill="#8884d8" barSize={50} />
+              <Bar
+                dataKey="amount"
+                fill="#8884d8"
+                barSize={50}
+                isAnimationActive={true}
+                animationDuration={1500}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         <div className="chart-container">
           <h4>Approval Status</h4>
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={300} key={`pie-${animateKey}`}>
             <PieChart>
               <Pie
                 data={statusData}
@@ -105,9 +118,14 @@ const Analytics = () => {
                 outerRadius={100}
                 fill="#8884d8"
                 dataKey="value"
+                isAnimationActive={true}
+                animationDuration={1500}
               >
                 {statusData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Legend />
