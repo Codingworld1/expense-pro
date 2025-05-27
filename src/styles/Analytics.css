@@ -68,3 +68,12 @@
     color: #444;
   }
   
+  .summary-card {
+  transition: transform 0.3s ease; /* smooth transition */
+  cursor: pointer; /* optional, to indicate it's interactive */
+}
+
+.summary-card:hover {
+  transform: scale(1.05); /* slightly bigger on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* subtle shadow */
+}

@@ -56,21 +56,7 @@
   font-size: 1rem;
 }
 
-.export-button {
-  padding: 8px 16px;
-  background-color: #c98c46;
-  color: white;
-  font-size: 1rem;
-  font-family: "Merriweather", serif;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.export-button:hover {
-  background-color: #b71c1c;
-}
+/* Removed export-button styles since export button removed */
 
 /* Reports List */
 .report-list {
@@ -81,71 +67,35 @@
 
 /* Individual Report Item */
 .report-item {
-  display: flex;
-  flex-direction: column;
   background-color: #ffffff;
-  padding: 15px 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
   cursor: pointer;
-}
-
-.report-top {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #333;
+  user-select: none;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  width: 100%;
+  align-items: center;
+  justify-content: flex-start; /* left align text */
+  min-height: 80px;
+  text-decoration: none; /* remove underline */
 }
 
-/* Report Information Styling */
-.report-info h4 {
-  margin: 0 0 5px;
-  font-size: 1.1rem;
-}
-
-.report-info p {
-  margin: 2px 0;
-  color: #7f8c8d;
-  font-size: 0.9rem;
-}
-
-.total-expense {
-  display: block;
-  font-weight: bold;
-  color: #2c3e50;
-  margin-top: 10px;
-}
-
-.report-meta {
-  text-align: right;
-  white-space: nowrap;
-  font-size: 0.9rem;
-  color: #34495e;
-}
-
-/* Report Details Styling (Hidden by Default) */
-.report-details {
-  width: 100%;
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  padding-top: 10px;
-  transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
-}
-
-/* Expanded View */
-.report-item.expanded .report-details {
-  max-height: 200px;
-  opacity: 1;
-}
-
+/* Hover effect */
 .report-item:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+  background-color: #f6e8cc;
+  color: #c98c46;
+  font-weight: 700;
+  text-decoration: none; /* prevent underline on hover */
 }
 
-.report-item:hover .report-info h4 {
-  color: #c98c46;
+/* Remove expanded details styling since no details on card */
+.report-details {
+  display: none;
 }
 
 @media (max-width: 768px) {
@@ -160,5 +110,11 @@
   .date-filters {
     flex-direction: column;
     gap: 10px;
+  }
+
+  .report-item {
+    font-size: 1.1rem;
+    padding: 20px;
+    min-height: 70px;
   }
 }

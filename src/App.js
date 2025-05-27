@@ -12,6 +12,8 @@ import Analytics from "./pages/Analytics";
 import ManagerExpenses from "./pages/ManagerExpenses";
 import Approvals from "./pages/Approvals";
 import ManagerNewExpense from "./pages/ManagerNewExpense";
+import MonthlyReportDetail from "./pages/MonthlyReportDetail";
+
 
 // Employee pages
 import EmployeeDashboard from "./pages/EmployeeDashboard";
@@ -37,6 +39,7 @@ const App = () => {
           <Route path="analytics" element={<Analytics />} />
           <Route path="my-expenses" element={<ManagerExpenses />} />
           <Route path="new-expense" element={<ManagerNewExpense />} />
+          <Route path="reports/:monthYear" element={<MonthlyReportDetail />} />
         </Route>
 
         {/* Employee Routes */}
