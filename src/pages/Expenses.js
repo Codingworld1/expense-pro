@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import "../styles/Expenses.css";
 
 const Expenses = () => {
@@ -22,6 +23,12 @@ const Expenses = () => {
         setLoading(true);
         const token = localStorage.getItem("token");
         if (!token) throw new Error("No authentication token found. Please login.");
+
+        // Decode token and save userRole in localStorage
+        const decoded = jwtDecode(token);
+        if (decoded.role) {
+          localStorage.setItem("userRole", decoded.role);
+        }
 
         const response = await axios.get("http://localhost:8080/api/expenses", {
           headers: { Authorization: `Bearer ${token}` },

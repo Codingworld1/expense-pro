@@ -51,7 +51,7 @@ const Analytics = () => {
       });
   }, []);
 
-  const COLORS = ["#00C49F", "#FF6B6B", "#FFC107"];
+  const COLORS = ["#00C49F", "#FFC107", "#FF6B6B"];
 
   if (!summary) return <p>Loading analytics...</p>;
 

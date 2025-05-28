@@ -1,26 +1,46 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";  // import useNavigate
+import { useNavigate, useLocation } from "react-router-dom"; 
 import "../styles/Dashboard.css";
 
 const EmployeeDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // initialize navigate
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
+    // Check if token is present in URL query parameters
+    const params = new URLSearchParams(location.search);
+    const tokenFromUrl = params.get("token");
+
+    if (tokenFromUrl) {
+      // Save token to localStorage
+      localStorage.setItem("token", tokenFromUrl);
+
+      // Remove token from URL (clean URL)
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+
+      // Set default Axios header
+      axios.defaults.headers.common["Authorization"] = `Bearer ${tokenFromUrl}`;
+    } else {
+      // No token in URL, try from localStorage
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+      } else {
+        // No token at all, redirect to login
+        navigate("/");
+        return; // prevent fetching dashboard data
+      }
+    }
+
+    // Fetch dashboard data
     const fetchDashboard = async () => {
       try {
-        // Assuming token is stored in localStorage
-        const token = localStorage.getItem("token");
-
-        const response = await axios.get("http://localhost:8080/api/dashboard/employee", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
+        const response = await axios.get("http://localhost:8080/api/dashboard/employee");
         setDashboardData(response.data);
         setLoading(false);
       } catch (err) {
@@ -30,21 +50,19 @@ const EmployeeDashboard = () => {
     };
 
     fetchDashboard();
-  }, []);
+  }, [location, navigate]);
 
   if (loading) return <div>Loading dashboard...</div>;
   if (error) return <div>{error}</div>;
 
-  const { totalExpenses, pendingApprovalCount, monthlyExpenses, recentExpenses } = dashboardData;
+  const { totalExpenses, pendingCount, monthlyExpenses, recentExpenses } = dashboardData;
 
-  // Handler for View all button
   const handleViewAllClick = () => {
-    navigate("/employee/my-expenses"); // navigate to the expenses page route
+    navigate("/employee/my-expenses");
   };
 
   return (
     <div className="dm-dashboard-container">
-      {/* Summary Cards */}
       <div className="dm-summary-cards">
         <div className="dm-summary-card">
           <h3 className="dm-card-label">Total Expenses</h3>
@@ -52,7 +70,7 @@ const EmployeeDashboard = () => {
         </div>
         <div className="dm-summary-card">
           <h3 className="dm-card-label">Pending Approval</h3>
-          <p className="dm-card-value">{pendingApprovalCount}</p>
+          <p className="dm-card-value">{pendingCount}</p>
         </div>
         <div className="dm-summary-card">
           <h3 className="dm-card-label">Expenses this Month</h3>
@@ -60,11 +78,12 @@ const EmployeeDashboard = () => {
         </div>
       </div>
 
-      {/* Recent Expenses */}
       <div className="dm-section">
         <div className="dm-expenses-header">
           <h2 className="dm-expenses-title">Recent Expenses</h2>
-          <button className="dm-view-all-btn" onClick={handleViewAllClick}>View all</button>
+          <button className="dm-view-all-btn" onClick={handleViewAllClick}>
+            View all
+          </button>
         </div>
         <div className="dm-expenses-list">
           {recentExpenses.length === 0 && <p>No recent expenses found.</p>}
